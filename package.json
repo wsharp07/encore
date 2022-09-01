@@ -6,6 +6,8 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
+    "init:python": "python3 -m venv venv && source ./venv/bin/activate && pip install -r requirements.txt",
+    "lint": "nx run-many --target=lint",
     "encore:serve-iot": "nx run-many --target=serve --projects=server,client"
   },
   "private": true,

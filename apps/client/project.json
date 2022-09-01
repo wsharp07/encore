@@ -9,6 +9,13 @@
         "command": "python main.py",
         "cwd": "apps/client/src"
       }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pylint src",
+        "cwd": "apps/client"
+      }
     }
   }
 }

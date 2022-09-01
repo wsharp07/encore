@@ -1,3 +1,4 @@
+"""Connects to the server socket and sends a message"""
 import socket
 
 HOST = "127.0.0.1"  # The server's hostname or IP address
