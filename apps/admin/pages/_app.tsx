@@ -6,7 +6,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Welcome to admin!</title>
+        <title>Welcome the Encore Admin Portal!</title>
       </Head>
       <main className="app">
         <Component {...pageProps} />
