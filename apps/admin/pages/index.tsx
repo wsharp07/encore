@@ -1,6 +1,30 @@
 import { Label, TextInput, Checkbox, Button } from 'flowbite-react';
 import { NextPage } from 'next';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { trpc } from '../utils/trpc';
+
+const AuthShowcase: React.FC = () => {
+  const { data: secretMessage, isLoading } = trpc.useQuery([
+    'auth.getSecretMessage',
+  ]);
+
+  console.log(secretMessage);
+
+  const { data: sessionData } = useSession();
+
+  return (
+    <div>
+      {sessionData && <p>Logged in as {sessionData?.user?.name}</p>}
+      {secretMessage && <p>{secretMessage}</p>}
+      <button
+        className="px-4 py-2 border-2 border-blue-500 rounded-md"
+        onClick={sessionData ? () => signOut() : () => signIn()}
+      >
+        {sessionData ? 'Sign out' : 'Sign in'}
+      </button>
+    </div>
+  );
+};
 
 const Home: NextPage = () => {
   const hello = trpc.useQuery(['example.hello', { text: 'from tRPC' }]);
@@ -8,13 +32,18 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <h1 className="ml-10 my-10 text-lg font-bold underline">
+      <h1 className="ml-10 my-10 text-4xl font-bold underline flex justify-center items-center">
         Encore Admin Portal
       </h1>
       <div className="pt-6 text-2xl text-blue-500 flex justify-center items-center w-full">
         {hello.data ? <p>{hello.data.greeting}</p> : <p>Loading..</p>}
       </div>
-      <div className="grid grid-cols-6 place-content-center">
+
+      <div className="pt-6 flex justify-center items-center w-full">
+        <AuthShowcase />
+      </div>
+
+      {/* <div className="grid grid-cols-6 place-content-center">
         <form className="flex flex-col gap-4 ml-10">
           <div>
             <div className="mb-2 block">
@@ -39,7 +68,7 @@ const Home: NextPage = () => {
           </div>
           <Button type="submit">Submit</Button>
         </form>
-      </div>
+      </div> */}
     </div>
   );
 };
