@@ -1,11 +1,19 @@
 import { Label, TextInput, Checkbox, Button } from 'flowbite-react';
+import { NextPage } from 'next';
+import { trpc } from '../utils/trpc';
 
-export function Index() {
+const Home: NextPage = () => {
+  const hello = trpc.useQuery(['example.hello', { text: 'from tRPC' }]);
+  console.log(hello);
+
   return (
     <div>
       <h1 className="ml-10 my-10 text-lg font-bold underline">
         Encore Admin Portal
       </h1>
+      <div className="pt-6 text-2xl text-blue-500 flex justify-center items-center w-full">
+        {hello.data ? <p>{hello.data.greeting}</p> : <p>Loading..</p>}
+      </div>
       <div className="grid grid-cols-6 place-content-center">
         <form className="flex flex-col gap-4 ml-10">
           <div>
@@ -34,6 +42,6 @@ export function Index() {
       </div>
     </div>
   );
-}
+};
 
-export default Index;
+export default Home;
