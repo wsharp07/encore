@@ -6,7 +6,7 @@
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "python3 main.py",
+        "command": "python main.py",
         "cwd": "apps/client/src"
       }
     }
