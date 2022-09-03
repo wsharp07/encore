@@ -5,6 +5,7 @@
     "admin": "apps/admin",
     "admin-e2e": "apps/admin-e2e",
     "client": "apps/client",
-    "server": "apps/server"
+    "server": "apps/server",
+    "socket": "libs/socket"
   }
 }

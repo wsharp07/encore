@@ -4,10 +4,9 @@
   "projectType": "application",
   "targets": {
     "serve": {
-      "executor": "nx:run-commands",
+      "executor": "./tools/executors/run-command:run-command",
       "options": {
-        "command": "python main.py",
-        "cwd": "apps/server/src"
+        "command": "python -m apps.server.src.main"
       }
     },
     "lint": {

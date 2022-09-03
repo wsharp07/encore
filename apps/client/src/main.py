@@ -1,12 +1,71 @@
 """Connects to the server socket and sends a message"""
+
+import os
+import sys
 import socket
+import selectors
+import traceback
+from dotenv import load_dotenv
+from libs.socket.message import Message
 
-HOST = "127.0.0.1"  # The server's hostname or IP address
-PORT = 65432  # The port used by the server
+load_dotenv()
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((HOST, PORT))
-    s.sendall(b"Hello, world")
-    data = s.recv(1024)
+HOST = os.environ.get("IOT_SERVER_HOST", "0.0.0.0")
+PORT = int(os.environ.get("IOT_SERVER_PORT", "9200"))
 
-print(f"Received {data!r}")
+sel = selectors.DefaultSelector()
+
+def create_request(action, value):
+    if action == "search":
+        return dict(
+            type="text/json",
+            encoding="utf-8",
+            content=dict(action=action, value=value),
+        )
+    else:
+        return dict(
+            type="binary/custom-client-binary-type",
+            encoding="binary",
+            content=bytes(action + value, encoding="utf-8"),
+        )
+
+
+def start_connection(host, port, request):
+    addr = (host, port)
+    print(f"Starting connection to {addr}")
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setblocking(False)
+    sock.connect_ex(addr)
+    events = selectors.EVENT_READ | selectors.EVENT_WRITE
+    message = Message(sel, sock, addr, request)
+    sel.register(sock, events, data=message)
+
+
+if len(sys.argv) != 5:
+    print(f"Usage: {sys.argv[0]} <host> <port> <action> <value>")
+    sys.exit(1)
+
+action, value = sys.argv[1], sys.argv[2]
+request = create_request(action, value)
+start_connection(HOST, PORT, request)
+
+try:
+    while True:
+        events = sel.select(timeout=1)
+        for key, mask in events:
+            message = key.data
+            try:
+                message.process_events(mask)
+            except Exception:
+                print(
+                    f"Main: Error: Exception for {message.addr}:\n"
+                    f"{traceback.format_exc()}"
+                )
+                message.close()
+        # Check for a socket being monitored to continue.
+        if not sel.get_map():
+            break
+except KeyboardInterrupt:
+    print("Caught keyboard interrupt, exiting")
+finally:
+    sel.close()

@@ -6,8 +6,8 @@
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "python main.py",
-        "cwd": "apps/client/src"
+        "command": "python -m apps.client.src.main",
+        "parallel": false
       }
     },
     "lint": {
