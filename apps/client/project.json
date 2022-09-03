@@ -4,10 +4,9 @@
   "projectType": "application",
   "targets": {
     "serve": {
-      "executor": "nx:run-commands",
+      "executor": "./tools/executors/run-command:run-command",
       "options": {
-        "command": "python -m apps.client.src.main",
-        "parallel": false
+        "command": "python -m apps.client.src.main search foo"
       }
     },
     "lint": {

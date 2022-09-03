@@ -6,7 +6,7 @@ import socket
 import selectors
 import traceback
 from dotenv import load_dotenv
-from libs.socket.message import Message
+from libs.socket.client_message import Message
 
 load_dotenv()
 
@@ -39,11 +39,6 @@ def start_connection(host, port, request):
     events = selectors.EVENT_READ | selectors.EVENT_WRITE
     message = Message(sel, sock, addr, request)
     sel.register(sock, events, data=message)
-
-
-if len(sys.argv) != 5:
-    print(f"Usage: {sys.argv[0]} <host> <port> <action> <value>")
-    sys.exit(1)
 
 action, value = sys.argv[1], sys.argv[2]
 request = create_request(action, value)
